@@ -91,6 +91,7 @@ on 메쏘드의 mouseover와 mouseout을 이벤트를 추가하였다.
 
 대략 100 줄로 데이터를 쉽게 볼 수 있도록 하였다. 가장 기본적인 형태이지만 좀 더 그럴사한 시각화는 약간의 시간만 더 투자하면 된다.
 
+전체 소스는 https://github.com/brenden17/d3 에서 볼 수 있다.
 
 ## Reference
 * http://d3js.org/
