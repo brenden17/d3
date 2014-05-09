@@ -35,47 +35,47 @@ d3.json("/alignment_json", function(error, data) {
     		.attr("id", index.toString())
 	        .attr("width", rectWidth)
 	        .attr("height", rectHeight)
-            .on("mouseover", function(){
-			    d3.select(this)
-                    .transition()
-	    			.style("fill", "#ccc");
+        	.on("mouseover", function(){
+		     d3.select(this)
+                        .transition()
+	    		.style("fill", "#ccc");
 				
-				var dIndex = d3.select(this).attr("id");
-				d3.select("#dec" + dIndex)
-				    .transition()
+			var dIndex = d3.select(this).attr("id");
+			d3.select("#dec" + dIndex)
+				.transition()
 			    	.style("fill", "red");
 
 			})
-            .on("mouseout", function(){
-				d3.select(this)
-    				.transition()
-    				.style("fill", "steelblue");
+            	.on("mouseout", function(){
+		    d3.select(this)
+    			.transition()
+    			.style("fill", "steelblue");
 				
-				var dIndex = d3.select(this).attr("id");
-				d3.select("#dec" + dIndex)
-				    .transition()
+			var dIndex = d3.select(this).attr("id");
+			d3.select("#dec" + dIndex)
+				.transition()
 			    	.style("fill", "steelblue");
 			});
 
 	    svg.append("g")
 	        .attr("transform", "translate(" + 20 * index + ", 0)").append("text")
-		    .attr("x", 10)
-		    .attr("y", 10)
+		.attr("x", 10)
+		.attr("y", 10)
 	    	.attr("dy", ".35em")
-		    .text(value.s);
+		.text(value.s);
 
 	    svg.append("g")
-		    .attr("transform", "translate(" + 20 * index + ", 40)").append("rect")
-		    .attr("id", "dec" + index.toString())
-		    .attr("width", rectWidth)
-		    .attr("height", rectHeight);
+		.attr("transform", "translate(" + 20 * index + ", 40)").append("rect")
+		.attr("id", "dec" + index.toString())
+		.attr("width", rectWidth)
+		.attr("height", rectHeight);
 
 	    svg.append("g")
-		    .attr("transform", "translate(" + 20 * index + ", 40)").append("text")
-		    .attr("x", 10)
-		    .attr("y", 10)
-		    .attr("dy", ".35em")
-		    .text(value.d);
+		.attr("transform", "translate(" + 20 * index + ", 40)").append("text")
+		.attr("x", 10)
+		.attr("y", 10)
+		.attr("dy", ".35em")
+		.text(value.d);
 	});
 });
 </script>
