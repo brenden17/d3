@@ -1,2 +1,4 @@
-## d3.js
+# d3.js
+
+* alignment 그림기
 
