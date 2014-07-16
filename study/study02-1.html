@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Demo: Making a bar chart with divs</title>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+        <style type="text/css">
+            .axis path,
+            .axis line {
+                fill: none;
+                stroke: black;
+                shape-rendering: crispEdges;
+            }
+                    
+            .axis text {
+                font-family: sans-serif;
+                font-size: 11px;
+            }
+
+        </style>
+    </head>
+    <body>
+        <script type="text/javascript">
+
+        function getSectionInfo(dataset, interval) {
+            var max = Math.max.apply(Math, dataset);
+            var min = Math.min.apply(Math, dataset);
+            var section = (max - min) / interval;
+
+            return [max, min, section];
+        }
+
+        function getSectionIndex(max, min, section, value) {
+            var intervalMin = min;
+            var intervalMax = min;
+            for(var i=0; i<interval; i++) {
+                intervalMin = intervalMax;
+                intervalMax = intervalMin + section;
+
+                if(value >= intervalMin && value <= intervalMax) {
+                    return i;
+                }
+                if(value < min) {
+                    return 0;
+                } 
+                if(value > max) {
+                    return interval - 1;
+                }
+            }
+                    
+        }
+
+        function getColor(value) {
+            var info = getSectionInfo(dataset, 3);
+            var max = info[0], min = info[1], section = info[2];
+            var index = getSectionIndex(max, min, section, value);
+            var color = getSectionInfo([0, 255], 3)[2];
+            return color * index
+        }
+
+
+        function init(t0, t1){
+            var svgWidth = 600, svgHeight = 400;
+            var dataset = [
+                        [5, 20, 12, 40],
+                        [480,90, 42, 10 ],
+                        [250, 50, 52, 40 ],
+                        [100, 33, 12, 20 ],
+                        [330, 95, 32, 40 ],
+                        [410, 12, 12, 70 ],
+                        [475, 44, 52, 10 ],
+                        [25, 67, 82, 20 ],
+                        [85, 21, 12, 90 ],
+                        [220, 88, 91, 70 ]
+                  ];
+            var interval = 3, padding = 30;
+              
+            var datasetY = Array();
+            for (var i=0; i<dataset.length; i++) {
+                datasetY.push(dataset[i][1]);
+            }
+
+            function getColor(value) {
+                var info = getSectionInfo(datasetY, interval);
+                var max = info[0], min = info[1], section = info[2];
+                var index = getSectionIndex(max, min, section, value);
+                var color = getSectionInfo([0, 255], interval)[2];
+
+                return parseInt(color) * index;
+            }
+
+            var svg = d3.select("#chart")
+                        .append("svg")
+                        .attr("width", svgWidth)
+                        .attr("height", svgHeight);
+
+            var xScale = d3.scale
+                            .linear()
+                            .domain([0, d3.max(dataset, function(d) { return d[t0]; })])
+                            .range([padding, svgWidth - padding * 2]);
+
+            var yScale = d3.scale
+                            .linear()
+                            .domain([0, d3.max(dataset, function(d) { return d[t1]; })])
+                            .range([svgHeight - padding, padding]);
+
+            var rScale = d3.scale
+                            .linear()
+                            .domain([0, d3.max(dataset, function(d) { return d[t1]; })])
+                            .range([2, 5]);
+
+            var xAxis = d3.svg.axis()
+                            .scale(xScale)
+                            .orient("bottom")
+                            .ticks(5);
+
+            var yAxis = d3.svg.axis()
+                            .scale(yScale)
+                            .orient("left")
+                            .ticks(5);
+
+            svg.selectAll("circle")
+                    .data(dataset)
+                    .enter()
+                    .append("circle")
+                    .attr("cx", function(d){
+                        return xScale(d[t0]);
+                    })
+                    .attr("cy", function(d){
+                        return yScale(d[t1]);
+                    })
+                    .attr("r", function(d){
+                        return rScale(d[t1]);
+                    })
+                    .on("mouseover", function() {
+                        d3.select(this)
+                        	.transition()
+                            .attr("r", 10)
+                            .attr("fill", "red");
+                    })
+                    .on("mouseout", function() {
+                        d3.select(this)
+                        	.transition()
+                            .attr("r", 5)
+                            .attr("fill", "black");
+                    });
+
+            svg.selectAll("text")
+                    .data(dataset)
+                    .enter()
+                    .append("text")
+                    .text(function(d) {
+                        return d[t0] + ", " + d[t1];
+                    })
+                    .attr("x", function(d) {
+                        return xScale(d[t0]);
+                    })
+                    .attr("y", function(d) {
+                        return yScale(d[t1]);
+                    })
+                    .attr("font-family", "sans-serif")
+                    .attr("font-size", "11px")
+                    .attr("fill", "red");
+
+            svg.append("g")
+                    .attr("class", "axis")
+                    .attr("transform", "translate(0," + (svgHeight - padding) + ")")
+                    .call(xAxis);
+                
+            svg.append("g")
+                .attr("class", "axis")
+                .attr("transform", "translate(" + padding + ",0)")
+                .call(yAxis);
+        }
+        
+        
+        $(document).ready(function(){
+            var t0 = 1, t1 = 3;
+            init(t0, t1);
+
+            $("#show").click(function() {
+                var t0 = $("input[name=col1]").val();
+                var t1 = $("input[name=col2]").val();
+                $("#chart").empty();
+                init(t0, t1);
+
+            });
+        });
+
+        </script>
+        <div id="chart"></div>
+        <form>
+            <input type="text" name='col1' /> 
+            <input type="text" name='col2' />
+            <input type='button' id='show' value='show' />
+        </form>
+    </body>
+</html>
